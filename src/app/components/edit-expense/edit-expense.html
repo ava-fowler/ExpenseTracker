@@ -1,0 +1,26 @@
+<div class="container mt-4">
+  <div class="card p-4" style="max-width: 500px; margin: 0 auto">
+    <h2 class="text-center mb-3">Edit Expense</h2>
+
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      <input type="text" class="form-control" [(ngModel)]="expense.title" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Amount ($)</label>
+      <input type="number" class="form-control" [(ngModel)]="expense.amount" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Category</label>
+      <select class="form-select" [(ngModel)]="expense.category">
+        @for (cat of expenseService.categories(); track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </div>
+
+    <button class="btn btn-primary w-100" (click)="save()">Save Changes</button>
+  </div>
+</div>

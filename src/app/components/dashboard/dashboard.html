@@ -1,0 +1,41 @@
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Dashboard</h2>
+
+  <div class="row mt-3">
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Total Expense</h5>
+          <p class="fs-4 total-expense">${{ expenseService.totalExpense() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Transactions</h5>
+          <p class="fs-4">{{ expenseService.transactionCount() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Highest Expense</h5>
+          <p class="fs-4 highest-expense">${{ expenseService.highestExpense() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Average Expense</h5>
+          <p class="fs-4 average-expense">${{ expenseService.averageExpense() }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
