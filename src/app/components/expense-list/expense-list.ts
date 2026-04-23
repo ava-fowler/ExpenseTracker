@@ -21,16 +21,19 @@ export class ExpenseListComponent {
   maxAmount = signal<number | null>(null);
 
   filteredExpenses = computed(() => {
-    return this.expenseService.expenses().filter(e => {
+  return this.expenseService.expenses().filter(e => {
+      const rawDate = (e.date as any) instanceof Date ? e.date : (e.date as any)?.toDate?.() ?? new Date(e.date);
+      const dateStr = rawDate instanceof Date && !isNaN(rawDate.getTime()) ? rawDate.toISOString().slice(0, 10) : '';
+
       const matchesSearch = e.title.toLowerCase().includes(this.searchTerm().toLowerCase());
-      const matchesCategory = this.selectedCategory() ? e.category === this.selectedCategory() : true;
-      const matchesStart = this.startDate() ? e.date >= this.startDate() : true;
-      const matchesEnd = this.endDate() ? e.date <= this.endDate() : true;
-      const matchesMin = this.minAmount() !== null ? e.amount >= this.minAmount()! : true;
-      const matchesMax = this.maxAmount() !== null ? e.amount <= this.maxAmount()! : true;
-      return matchesSearch && matchesCategory && matchesStart && matchesEnd && matchesMin && matchesMax;
-    });
+    const matchesCategory = this.selectedCategory() ? e.category === this.selectedCategory() : true;
+    const matchesStart = this.startDate() ? dateStr >= this.startDate() : true;
+    const matchesEnd = this.endDate() ? dateStr <= this.endDate() : true;
+    const matchesMin = this.minAmount() !== null ? e.amount >= this.minAmount()! : true;
+    const matchesMax = this.maxAmount() !== null ? e.amount <= this.maxAmount()! : true;
+    return matchesSearch && matchesCategory && matchesStart && matchesEnd && matchesMin && matchesMax;
   });
+});
 
   constructor(
     public expenseService: ExpenseService,

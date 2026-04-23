@@ -50,21 +50,19 @@ export class AddExpenseComponent {
   }
 
   addNewCategory() {
-    if (!this.userId || !this.newCategoryName.trim()) return;
+  if (!this.userId || !this.newCategoryName.trim()) return;
 
-    const category: Category = {
-      name: this.newCategoryName.trim(),
-      icon: '',
-      color: ''
-    };
+  const category: Category = {
+    name: this.newCategoryName.trim(),
+    icon: '',
+    color: ''
+  };
 
-    this.categoryService.addCategory(this.userId, category).then(() => {
-      this.userCategories = [...this.userCategories, category];
-      this.newCategoryName = '';
-      this.isAddingCategory = false;
-      this.cdr.detectChanges();
-    });
-  }
+  this.categoryService.addCategory(this.userId, category).then(() => {
+    this.newCategoryName = '';
+    this.isAddingCategory = false;
+  });
+}
 
   deleteCategory(categoryId: string) {
   if (!this.userId) return;
