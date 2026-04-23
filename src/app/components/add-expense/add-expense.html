@@ -14,12 +14,90 @@
       </div>
 
       <div class="mb-3">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-control" [(ngModel)]="date" />
+      </div>
+
+      <div class="mb-3">
         <label class="form-label">Category</label>
         <select class="form-select" [(ngModel)]="category">
           <option value="">Select category</option>
-          <option *ngFor="let c of expenseService.categories()">
+          <option *ngFor="let c of predefinedCategories" [value]="c">
             {{ c }}
           </option>
+          <option *ngFor="let uc of userCategories" [value]="uc.name">
+            {{ uc.name }}
+          </option>
+        </select>
+        <div *ngIf="category" class="mt-2 d-flex align-items-center gap-2">
+          <span
+            [style.background-color]="expenseService.getColor(category)"
+            style="
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            {{ expenseService.getIcon(category) }}
+          </span>
+          <span>{{ category }}</span>
+        </div>
+      </div>
+
+      <!-- Add Category Button -->
+      <div class="mb-3">
+        <button
+          class="btn btn-secondary btn-sm"
+          (click)="isAddingCategory = true"
+          *ngIf="!isAddingCategory"
+        >
+          + Add Category
+        </button>
+
+        <!-- New Category Input -->
+        <div *ngIf="isAddingCategory" class="mt-2">
+          <input
+            type="text"
+            class="form-control mb-2"
+            placeholder="New category name"
+            [(ngModel)]="newCategoryName"
+          />
+          <button class="btn btn-success btn-sm me-2" (click)="addNewCategory()">
+            Save Category
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" (click)="isAddingCategory = false">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <!-- User Categories List with Delete -->
+      <div class="mb-3" *ngIf="userCategories.length > 0">
+        <label class="form-label">Your Custom Categories</label>
+        <ul class="list-group">
+          <li
+            *ngFor="let uc of userCategories"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            {{ uc.name }}
+            <button class="btn btn-danger btn-sm" (click)="deleteCategory(uc.id!)">Delete</button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Notes</label>
+        <textarea class="form-control" [(ngModel)]="notes" name="notes"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Type</label>
+        <select class="form-select" [(ngModel)]="type" name="type" required>
+          <option value="expense">Expense</option>
+          <option value="income">Income</option>
         </select>
       </div>
 

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Expense } from '../../models/expense';
-import { ExpenseService } from '../../services/expense';
+import { ExpenseService } from '../../services/expense.service';
 
 @Component({
   selector: 'app-expense-item',
@@ -18,6 +18,8 @@ export class ExpenseItemComponent {
   constructor(private expenseService: ExpenseService) {}
 
   deleteExpense() {
-    this.expenseService.deleteExpense(this.expense.id);
+    if (this.expense.id) {
+      this.expenseService.deleteExpense(this.expense.id);
+    }
   }
 }

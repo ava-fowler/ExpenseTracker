@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectorRef } from '@angular/core';
+import { ExpenseService } from '../../services/expense.service';
 import { FormsModule } from '@angular/forms';
-import { ExpenseService } from '../../services/expense';
-import { Expense } from '../../models/expense';
+import { CommonModule } from '@angular/common';
+import { Expense, ExpenseCategory } from '../../models/expense';
+import { CategoryService } from '../../services/category.service';
+import { Category } from '../../models/category';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-add-expense',
@@ -12,28 +15,82 @@ import { Expense } from '../../models/expense';
   styleUrls: ['./add-expense.css']
 })
 export class AddExpenseComponent {
-
-  title = '';
-  amount: number | null = null;
+  amount = 0;
   category = '';
+  date = '';
+  title = '';
+  notes = '';
+  type: 'income' | 'expense' = 'expense';
+  userId: string | null = null;
+  userCategories: Category[] = [];
+  newCategoryName: string = '';
+  isAddingCategory: boolean = false;
+  predefinedCategories: string[] = [];
+;
 
-  constructor(public expenseService: ExpenseService) {}
+  constructor(
+    public expenseService: ExpenseService,
+    public categoryService: CategoryService,
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.predefinedCategories = this.expenseService.categories();
+    this.loadUserCategories();
+  }
 
-  addExpense() {
-    if (!this.title || !this.amount || !this.category) return;
+  loadUserCategories() {
+    this.authService.currentUser$.subscribe(user => {
+      if (!user) return;
+      this.userId = user.uid;
+      this.categoryService.getCategories(user.uid).subscribe(categories => {
+        this.userCategories = [...categories];
+        this.cdr.detectChanges();
+      });
+    });
+  }
 
-    const newExpense: Expense = {
-      id: crypto.randomUUID(),
-      title: this.title,
-      amount: this.amount,
-      category: this.category as any
+  addNewCategory() {
+    if (!this.userId || !this.newCategoryName.trim()) return;
+
+    const category: Category = {
+      name: this.newCategoryName.trim(),
+      icon: '',
+      color: ''
     };
 
+    this.categoryService.addCategory(this.userId, category).then(() => {
+      this.userCategories = [...this.userCategories, category];
+      this.newCategoryName = '';
+      this.isAddingCategory = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  deleteCategory(categoryId: string) {
+  if (!this.userId) return;
+  this.categoryService.deleteCategory(this.userId, categoryId).then(() => {
+    this.userCategories = this.userCategories.filter(c => c.id !== categoryId);
+    this.cdr.detectChanges();
+  });
+}
+
+  addExpense() {
+    if (this.amount <= 0 || !this.category || !this.date || !this.title) return;
+    const newExpense: Expense = {
+      title: this.title,
+      amount: this.amount,
+      date: this.date,
+      category: this.category as ExpenseCategory,
+      notes: this.notes,
+      type: this.type
+    };
     this.expenseService.addExpense(newExpense);
 
-    // Clear form
-    this.title = '';
-    this.amount = null;
+    this.amount = 0;
     this.category = '';
+    this.date = '';
+    this.title = '';
+    this.notes = '';
+    this.type = 'expense';
   }
 }

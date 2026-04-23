@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ExpenseService } from '../../services/expense';
+import { ExpenseService } from '../../services/expense.service';
 import { Expense } from '../../models/expense';
 
 @Component({
@@ -12,7 +12,7 @@ import { Expense } from '../../models/expense';
   templateUrl: './edit-expense.html',
   styleUrls: ['./edit-expense.css']
 })
-export class EditExpenseComponent {
+export class EditExpenseComponent implements OnInit {
 
   expense!: Expense;
 
@@ -23,16 +23,16 @@ export class EditExpenseComponent {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id')!;
-    const found = this.expenseService.getExpenseById(id);
-
+    const id = this.route.snapshot.paramMap.get('id');
+    const found = this.expenseService.getExpenseById(id!);
     if (found) {
-      this.expense = { ...found }; // copy so editing doesn't mutate live data
+      this.expense = found;
     }
   }
 
   save() {
-    this.expenseService.updateExpense(this.expense);
+    const { id, ...data } = this.expense;
+    this.expenseService.updateExpense(id!, data);
     this.router.navigate(['/list']);
   }
 }

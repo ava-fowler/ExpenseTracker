@@ -1,12 +1,13 @@
 <div class="container mt-4">
   <h2 class="text-center mb-4">Dashboard</h2>
 
+  <!-- Summary Cards -->
   <div class="row mt-3">
     <div class="col-md-3">
       <div class="card text-center">
         <div class="card-body">
           <h5>Total Expense</h5>
-          <p class="fs-4 total-expense">${{ expenseService.totalExpense() }}</p>
+          <p class="fs-4">${{ expenseService.totalExpense() }}</p>
         </div>
       </div>
     </div>
@@ -24,7 +25,7 @@
       <div class="card text-center">
         <div class="card-body">
           <h5>Highest Expense</h5>
-          <p class="fs-4 highest-expense">${{ expenseService.highestExpense() }}</p>
+          <p class="fs-4">${{ expenseService.highestExpense() }}</p>
         </div>
       </div>
     </div>
@@ -33,7 +34,67 @@
       <div class="card text-center">
         <div class="card-body">
           <h5>Average Expense</h5>
-          <p class="fs-4 average-expense">${{ expenseService.averageExpense() }}</p>
+          <p class="fs-4">${{ expenseService.averageExpense() }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row mt-5">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Spending by Category</h5>
+          <canvas #pieCanvas></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Income vs Expense</h5>
+          <canvas #barCanvas></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Summary -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Monthly Spending Summary</h5>
+
+          <div *ngIf="monthlySummary().length === 0">
+            <p>No data yet.</p>
+          </div>
+
+          <table class="table" *ngIf="monthlySummary().length > 0">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Income</th>
+                <th>Expenses</th>
+                <th>Net</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of monthlySummary()">
+                <td>{{ row[0] }}</td>
+                <td class="text-success">${{ row[1].income }}</td>
+                <td class="text-danger">${{ row[1].expense }}</td>
+                <td
+                  [class.text-success]="row[1].income - row[1].expense >= 0"
+                  [class.text-danger]="row[1].income - row[1].expense < 0"
+                >
+                  ${{ row[1].income - row[1].expense }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
